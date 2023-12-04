@@ -24,13 +24,6 @@ resource "azurerm_subnet" "VT" {
   virtual_network_name = azurerm_virtual_network.VT.name
   address_prefixes     = ["10.0.2.0/24"]
 }
-# Create a public IP address resource
-resource "azurerm_public_ip" "VT_public_ip" {
-  name                = "VT-publicip"
-  location            = azurerm_resource_group.VT.location
-  resource_group_name = azurerm_resource_group.VT.name
-  allocation_method   = "Static"  // or "Static"
-}
 
 resource "azurerm_network_interface" "VT" {
   name                = "VT-nic"
@@ -41,7 +34,6 @@ resource "azurerm_network_interface" "VT" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.VT.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.VT_public_ip.id
     // Add other required fields...
   }
 }
@@ -57,7 +49,7 @@ resource "azurerm_virtual_machine" "checkpoint_fw" {
   # Specify Check Point image
   storage_image_reference {
     publisher = "checkpoint"
-    offer     = "check-point-cg-r8120"
+    offer     = "check-point-cg-r8110"
     sku       = "sg-byol"
     version   = "latest"
   }
@@ -66,11 +58,11 @@ resource "azurerm_virtual_machine" "checkpoint_fw" {
   plan {
     name      = "sg-byol"
     publisher = "checkpoint"
-    product   = "check-point-cg-r8120"
+    product   = "check-point-cg-r8110"
   }
 
   storage_os_disk {
-    name              = "R8120OsDisk"
+    name              = "R81dot10myOsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -78,8 +70,8 @@ resource "azurerm_virtual_machine" "checkpoint_fw" {
 
   os_profile {
     computer_name  = "checkpointfw"
-    admin_username = var.admin_username
-    admin_password = var.admin_password
+    admin_username = "adminuser"
+    admin_password = "Password123!"
   }
 
   os_profile_linux_config {
