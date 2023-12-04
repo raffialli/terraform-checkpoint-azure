@@ -1,4 +1,4 @@
-# Define your resource group name and VM name
+# Define your resource group name and VM name.
 $resourceGroupName = "VT-resources"
 $vmName = "checkpoint-fw"
 
